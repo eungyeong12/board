@@ -73,7 +73,7 @@
                     <p class="text-muted mb-0" style="font-size: small;" th:text="*{#temporals.format(comment.commentCreatedTime, 'yyyy-MM-dd HH:mm:ss')}"></p>
                 </div>
             </div>
-            <p th:text="${comment.commentContents}"></p>
+            <p style="white-space: pre-line" th:text="${comment.commentContents}"></p>
         </div>
     </div>
 
