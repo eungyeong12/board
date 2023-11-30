@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+<style>
+    .page-item:first-child .page-link {
+        border-top-left-radius: 0.25rem;
+        border-bottom-left-radius: 0.25rem;
+    }
+
+    .page-item:last-child .page-link {
+        border-top-right-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+    }
+
+</style>
+<body>
+<div class="container">
+<div class="container">
+    <div class="container">
+<div class="container mt-4">
+    <br>
+    <h4 class="mb-4"><a href="/" style="text-decoration: none; color: inherit; font-weight: bold">자유게시판</a></h4>
+    <table class="table table-striped table-hover">
+        <!-- 테이블 헤더 -->
+        <thead>
+        <tr>
+            <th class="col text-center" style="width: 120px;">번호</th>
+            <th class="col text-center">제목</th>
+            <th class="col text-center" style="width: 150px;">작성자</th>
+            <th class="col text-center" style="width: 150px;">등록일</th>
+            <th class="col text-center" style="width: 120px;">조회수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 각각의 게시글 행 -->
+        <tr th:each="board, list: ${boardList}">
+            <td th:text="${boardList.totalElements - (boardList.number * boardList.size + list.index)}" class="text-center"></td>
+            <td><a th:href="@{|/board/${board.id}|}" th:text="${board.boardTitle}" style="text-decoration: none; color: inherit;"></a></td>
+            <td th:text="${board.boardWriter}" class="text-center"></td>
+            <td th:text="*{#temporals.format(board.boardCreatedTime, 'yyyy-MM-dd')}" class="text-center"></td>
+            <td th:text="${board.boardHits}" class="text-center"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-end">
+        <button class="btn btn-primary" onclick="saveReq()">글작성</button>
+    </div>
+
+    <!-- 페이지 네비게이션 -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link" th:href="@{/(page=1)}"><<</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" th:href="${boardList.first} ? '#' : @{/(page=${boardList.number})}"><</a>
+            </li>
+            <span th:each="page: ${#numbers.sequence(startPage, endPage)}">
+                <li class="page-item" th:classappend="${page == boardList.number + 1} ? 'active'">
+                    <span th:if="${page == boardList.number + 1}" class="page-link" th:text="${page}"></span>
+                    <a th:unless="${page == boardList.number + 1}" class="page-link" th:href="@{/(page=${page})}" th:text="${page}"></a>
+                </li>
+            </span>
+            <li class="page-item">
+                <a class="page-link" th:href="${boardList.last} ? '#' : @{/(page=${boardList.number + 2})}">></a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" th:href="@{/(page=${boardList.totalPages})}">>></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+    </div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+<script>
+    const saveReq = () => {
+        location.href = "/board/save";
+    }
+
+</script>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <!-- jquery cdn -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="container">
+    <div class="container">
+        <div class="container">
+            <div class="container">
+<div class="container mt-4">
+    <table class="table table-bordered ">
+        <br/>
+        <h4 class="mb-4"><a href="/" style="text-decoration: none; color: inherit; font-weight: bold">자유게시판</a></h4>
+        <tbody class="mt-2">
+        <tr>
+            <th style="width: 15%; background-color: #f8f9fa">번호</th>
+            <td style="width: 35%;" class="table-striped" th:text="${board.id}"></td>
+            <th style="width: 15%; background-color: #f8f9fa">등록일</th>
+            <td style="width: 35%;" class="table-striped" th:text="*{#temporals.format(board.boardCreatedTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        </tr>
+        <tr>
+            <th style="width: 15%; background-color: #f8f9fa">작성자</th>
+            <td style="width: 35%;" class="table-striped" th:text="${board.boardWriter}"></td>
+            <th style="width: 15%; background-color: #f8f9fa">조회수</th>
+            <td style="width: 35%;" class="table-striped" th:text="${board.boardHits}"></td>
+        </tr>
+        <tr>
+            <th style="width: 15%; background-color: #f8f9fa">제목</th>
+            <td colspan="3" class="table-striped" th:text="${board.boardTitle}"></td>
+        </tr>
+        <tr>
+            <th style="width: 15%; background-color: #f8f9fa">내용</th>
+            <td colspan="3" class="table-striped"><p style="white-space: pre-line" th:text="${board.boardContents}"></p></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="d-grid gap-1 d-md-flex justify-content-md-center">
+        <button class="btn btn-outline-success me-md-1" onclick="listReq()">목록</button>
+        <button class="btn btn-outline-danger me-md-1" onclick="updateReq()">수정</button>
+        <button class="btn btn btn-outline-primary" onclick="deleteReq()">삭제</button>
+    </div>
+    <br>
+    <br/>
+    <br/>
+    <!-- 댓글 작성 부분 -->
+    <div class="card mb-2">
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="form-inline mb-2 col-3">
+                    <input type="text" id="commentWriter" class="form-control" placeholder="작성자" required>
+                </div>
+                <textarea class="form-control" id="commentContents" rows="3" placeholder="댓글을 입력해 주세요." required></textarea>
+                <button type="button" id="comment-write-btn" class="btn btn-dark mt-3" onclick="commentWrite()">등록</button>
+            </li>
+        </ul>
+    </div>
+    </div>
+    <br/>
+    <!-- 댓글 출력 부분 -->
+    <!-- 댓글 출력 부분 -->
+    <!-- 댓글 출력 부분 -->
+    <div th:each="comment, commentStat: ${commentList}">
+        <div class="border-bottom py-3" th:classappend="${commentStat.first} ? '': 'mt-3'">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex align-items-center">
+                    <p class="fw-bold mb-0 me-3" th:text="${comment.commentWriter}"></p>
+                    <p class="text-muted mb-0" style="font-size: small;" th:text="*{#temporals.format(comment.commentCreatedTime, 'yyyy-MM-dd HH:mm:ss')}"></p>
+                </div>
+            </div>
+            <p th:text="${comment.commentContents}"></p>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+</body>
+<script th:inline="javascript">
+    const commentWrite = () => {
+        const writer = document.getElementById("commentWriter").value;
+        const contents = document.getElementById("commentContents").value;
+        console.log("작성자: ", writer);
+        console.log("내용: ", contents);
+        const id = [[${board.id}]];
+        $.ajax({
+            // 요청방식: post, 요청주소: /comment/save, 요청데이터: 작성자, 작성내용, 게시글번호
+            type: "post",
+            url: "/comment/save",
+            data: {
+                "commentWriter": writer,
+                "commentContents": contents,
+                "boardId": id
+            },
+            success: function (res) {
+                console.log("요청성공", res);
+                let output = "<table>";
+                output += "<tr><th>댓글번호</th>";
+                output += "<th>작성자</th>";
+                output += "<th>내용</th>";
+                output += "<th>작성시간</th></tr>";
+
+                function formatDate(date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const hours = String(date.getHours()).padStart(2, '0');
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+                    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                }
+
+                for (let i in res) {
+                    const createdTime = new Date(res[i].commentCreatedTime);
+                    const formattedTime = formatDate(createdTime);
+
+                    output += "<tr>";
+                    output += "<td>" + res[i].id + "</td>";
+                    output += "<td>" + res[i].commentWriter + "</td>";
+                    output += "<td>" + res[i].commentContents + "</td>";
+                    output += "<td>" + formattedTime + "</td>";
+                    output += "</tr>";
+                }
+                output += "</table>";
+                document.getElementById('comment-list').innerHTML = output;
+                document.getElementById('commentWriter').value = '';
+                document.getElementById('commentContents').value = '';
+            },
+            error: function (err) {
+                console.log("요청실패", err);
+            }
+        });
+
+    }
+
+    const listReq = () => {
+        console.log("목록 요청");
+        const page = [[${page}]];
+        location.href = "/?page="+page;
+    }
+    const updateReq = () => {
+        console.log("수정 요청");
+        const id = [[${board.id}]];
+        location.href = "/board/update/" + id;
+    }
+    const deleteReq = () => {
+        console.log("삭제 요청");
+        const id = [[${board.id}]];
+        location.href = "/board/delete/" + id;
+    }
+</script>
+</html>
