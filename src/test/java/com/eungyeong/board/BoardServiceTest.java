@@ -15,6 +15,7 @@ public class BoardServiceTest {
     @Test
     public void save() {
         for(int i=1; i<=100; i++) {
+
             BoardEntity boardEntity = new BoardEntity();
             boardEntity.setBoardPass(i+"");
             boardEntity.setBoardTitle(i+"번째 게시물 내용");
