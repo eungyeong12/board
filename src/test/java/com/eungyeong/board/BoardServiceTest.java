@@ -14,13 +14,16 @@ public class BoardServiceTest {
 
     @Test
     public void save() {
-        BoardEntity boardEntity = new BoardEntity();
-        boardEntity.setBoardPass("1");
-        boardEntity.setBoardTitle("1");
-        boardEntity.setBoardWriter("1");
-        boardEntity.setBoardContents("1");
-        BoardDto boardDto = BoardDto.toBoardDto(boardEntity);
-        boardService.save(boardDto);
+        for(int i=1; i<=100; i++) {
+            BoardEntity boardEntity = new BoardEntity();
+            boardEntity.setBoardPass(i+"");
+            boardEntity.setBoardTitle(i+"번째 게시물 내용");
+            boardEntity.setBoardWriter("테스터"+i);
+            boardEntity.setBoardContents(i+"번째 게시물 내용");
+            BoardDto boardDto = BoardDto.toBoardDto(boardEntity);
+            boardService.save(boardDto);
+        }
+
 
     }
 }
