@@ -1,7 +1,7 @@
 ## 게시판
 
 ### 소개
-- Spring Boot를 사용한 간단한 게시판입니다.
+- Spring Boot를 사용하여 만든 간단한 게시판입니다.
   
 ### 스크린샷
 ![image01](https://github.com/user-attachments/assets/ca23bd43-8f31-4bb2-92dc-8d44891f8891)
